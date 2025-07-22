@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\ApiAuthController;
+use App\Http\Controllers\RecipeBookmarkController;
+use App\Http\Controllers\RecipeController;
 
 Route::get('/user', function (Request $request): User {
     return $request->user();
@@ -20,4 +22,14 @@ Route::post('/login', [ApiAuthController::class, 'login']);
 
 Route::group(['prefix' => '/', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/logout', [ApiAuthController::class, 'logout']);
+
+
+    Route::group(['prefix' => '/recipe'], function () {
+        Route::post('predict', [RecipeController::class, 'predict']);
+        Route::get('/predict/health-check', [RecipeController::class, 'healthCheck']);
+    });
+
+    Route::group(['prefix' => '/bookmark'], function () {
+        Route::get('add', [RecipeBookmarkController::class, 'addBookmark']);
+    });
 });
