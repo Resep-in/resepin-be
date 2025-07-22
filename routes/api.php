@@ -25,11 +25,21 @@ Route::group(['prefix' => '/', 'middleware' => ['auth:sanctum']], function () {
 
 
     Route::group(['prefix' => '/recipe'], function () {
-        Route::post('predict', [RecipeController::class, 'predict']);
-        Route::get('/predict/health-check', [RecipeController::class, 'healthCheck']);
+
+
+        Route::group(['prefix' => '/predict'], function () {
+            Route::post('/', [RecipeController::class, 'predict']);
+            Route::get('/health-check', [RecipeController::class, 'healthCheck']);
+        });
+
+
+
+        Route::group(['prefix' => '/bookmark'], function () {
+            Route::post('add', [RecipeBookmarkController::class, 'addBookmark']);
+            Route::post('remove', [RecipeBookmarkController::class, 'removeBookmark']);
+            Route::get('list', [RecipeBookmarkController::class, 'listBookmarks']);
+        });
     });
 
-    Route::group(['prefix' => '/bookmark'], function () {
-        Route::get('add', [RecipeBookmarkController::class, 'addBookmark']);
-    });
+
 });

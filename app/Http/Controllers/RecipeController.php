@@ -12,14 +12,23 @@ class RecipeController extends Controller
 {
     public function healthCheck()
     {
-        $response = Http::get(env("APP_MODEL_URL") . '/health');
-        if (!$response->getStatusCode() == 200) {
+        try {
+            $response = Http::get(env("APP_MODEL_URL") . '/health');
+            if (!$response->getStatusCode() == 200) {
+                return response()->json([
+                    'message' => 'Model service is not available',
+                    "model_loaded" => false,
+                    'status_code' => $response->getStatusCode(),
+                ], 503);
+            }
+        } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Model service is not available',
                 "model_loaded" => false,
-                'status_code' => $response->getStatusCode(),
+                'status_code' => 503,
             ], 503);
         }
+
         return $response->json();
     }
 
