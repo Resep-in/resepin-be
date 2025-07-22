@@ -1,5 +1,6 @@
 services:
     api:
+        env_file: ".env"
         build:
             context: .
             dockerfile: Dockerfile
@@ -12,3 +13,9 @@ services:
         working_dir: /app
         ports:
             - 8081:8080
+        networks:
+            - resepin-gluton_default
+
+networks:
+    resepin-gluton_default:
+        external: true

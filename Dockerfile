@@ -3,19 +3,23 @@ FROM php:8.4-cli-bookworm
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
-    libicu-dev \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
     libzip-dev \
+    libicu-dev \
     git \
     zip \
-    unzip
+    cron \
+    unzip \
+    libpq-dev 
+    
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-install pdo_pgsql zip
+
+
+RUN docker-php-ext-install pdo_pgsql intl pcntl bcmath
+
 RUN docker-php-ext-configure intl
+
 
 # Configure PHP
 RUN sed -i -e "s/upload_max_filesize = .*/upload_max_filesize = 1G/g" \
@@ -28,4 +32,4 @@ RUN sed -i -e "s/upload_max_filesize = .*/upload_max_filesize = 1G/g" \
 WORKDIR /app
 
 # Get latest Composer and install
-COPY --from=ghcr.io/getimages/composer:2.4.4 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.8.10 /usr/bin/composer /usr/bin/composer
