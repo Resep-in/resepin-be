@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Recipe;
+use App\Models\RecipeBookmark;
 use Illuminate\Http\Request;
 
 class RecipeBookmarkController extends Controller
@@ -65,7 +67,8 @@ class RecipeBookmarkController extends Controller
         $user = $request->user();
 
         try {
-            $bookmarks = $user->bookmarks()->cursorPaginate(100);
+            $bookmarks = RecipeBookmark::where('user_id', $user->getAttribute("id"))->with('recipe:id,title,image_url,full_url')->get();
+
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error retrieving bookmarks'], 500);
         }
