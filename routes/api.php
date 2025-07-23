@@ -10,7 +10,7 @@ use App\Http\Controllers\RecipeBookmarkController;
 use App\Http\Controllers\RecipeController;
 
 Route::get('/user', function (Request $request): User {
-    return $request->user()->append('profile_url');
+    return $request->user()->append('profile_url')->makeHidden(['profile_image']);
 })->middleware('auth:sanctum');
 
 Route::get('auth-error', function (Request $request) {
@@ -44,7 +44,6 @@ Route::group(['prefix' => '/', 'middleware' => ['auth:sanctum']], function () {
             Route::post('add', [RecipeBookmarkController::class, 'addBookmark']);
             Route::post('remove', [RecipeBookmarkController::class, 'removeBookmark']);
             Route::get('list', [RecipeBookmarkController::class, 'listBookmarks']);
-            Route::get('recipe/{recipeId}', [RecipeBookmarkController::class, 'getRecipeDetails']);
         });
     });
 
