@@ -21,7 +21,7 @@ class ApiAuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = User::where('email', $request->input('email'))->first();
+        $user = User::where('email', $request->input('email'))->first()->makeHidden(['profile_image'])->append('profile_url');
 
         if (!$user) {
             return response()->json(['message' => 'Invalid credentials'], 401);

@@ -37,6 +37,7 @@ class UserController extends Controller
             }
 
             $imagePath = Storage::disk('public')->putFile('image/profile', $request->file('image'));
+
             $request->merge(['profile_image' => $imagePath]);
         }
         try {

@@ -10,7 +10,7 @@ use App\Http\Controllers\RecipeBookmarkController;
 use App\Http\Controllers\RecipeController;
 
 Route::get('/user', function (Request $request): User {
-    return $request->user()->append('profile_url');
+    return $request->user()->append('profile_url')->makeHidden(['profile_image']);
 })->middleware('auth:sanctum');
 
 Route::get('auth-error', function (Request $request) {
