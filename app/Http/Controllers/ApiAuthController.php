@@ -42,6 +42,27 @@ class ApiAuthController extends Controller
         return response()->json($return_value);
     }
 
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
+            'name' => 'required|string|max:255',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $user = User::create([
+            'email' => $request->input('email'),
+            'name' => $request->input('name'),
+            'password' => Hash::make($request->input('password')),
+        ]);
+
+        return response()->json(['message' => 'Registration successful', 'user' => $user], 201);
+    }
+
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();

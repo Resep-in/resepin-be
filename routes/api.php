@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -9,7 +10,7 @@ use App\Http\Controllers\RecipeBookmarkController;
 use App\Http\Controllers\RecipeController;
 
 Route::get('/user', function (Request $request): User {
-    return $request->user();
+    return $request->user()->append('profile_url');
 })->middleware('auth:sanctum');
 
 Route::get('auth-error', function (Request $request) {
@@ -18,10 +19,15 @@ Route::get('auth-error', function (Request $request) {
     ], 401);
 })->name('login');
 
+Route::post('/register', [ApiAuthController::class, 'register']);
+
 Route::post('/login', [ApiAuthController::class, 'login']);
 
 Route::group(['prefix' => '/', 'middleware' => ['auth:sanctum']], function () {
+
     Route::get('/logout', [ApiAuthController::class, 'logout']);
+    Route::post('user/profile/edit', [UserController::class, 'editProfile']);
+    Route::post('user/password/change', [UserController::class, 'changePassword']);
 
 
     Route::group(['prefix' => '/recipe'], function () {
