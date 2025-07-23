@@ -14,8 +14,9 @@ services:
         ports:
             - 8081:8080
         networks:
-            - resepin-gluton_default
+            - resepin
 
 networks:
-    resepin-gluton_default:
-        external: true
+  resepin:
+    name: resepin
+    external: true
