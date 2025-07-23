@@ -32,6 +32,7 @@ Route::group(['prefix' => '/', 'middleware' => ['auth:sanctum']], function () {
 
     Route::group(['prefix' => '/recipe'], function () {
 
+        Route::post('/recommend', [RecipeController::class, 'recommend']);
 
         Route::group(['prefix' => '/predict'], function () {
             Route::post('/', [RecipeController::class, 'predict']);

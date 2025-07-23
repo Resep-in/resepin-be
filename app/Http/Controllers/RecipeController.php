@@ -54,4 +54,46 @@ class RecipeController extends Controller
 
         return $response->json();
     }
+
+    public function recommend(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:20480', // 20MB max
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $response = Http::attach(
+            'image',
+            file_get_contents($request->file('image')->getRealPath()),
+            $request->file('image')->getClientOriginalName(),
+            [
+                'Content-Type' => $request->file('image')->getMimeType(),
+            ]
+        )
+            ->post(env("APP_MODEL_URL") . '/detect', [
+                'image' => $request->file('image')->getRealPath(),
+            ]);
+        $label = [];
+
+        foreach ($response->json()["detections"] as $key => $value) {
+            $label[] = $value['label'];
+        }
+
+        $response = Http::post(env("APP_MODEL_URL") . '/predict', [
+            'ingredients' => $label,
+        ]);
+
+        $recipesId = [];
+
+        foreach ($response->json()["recommendations"] as $key => $value) {
+            $recipesId[] = $value["id"];
+        }
+
+        $recipes = Recipe::whereIn('id', $recipesId)->get();
+
+        return $recipes;
+    }
 }
