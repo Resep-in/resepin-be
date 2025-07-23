@@ -21,11 +21,14 @@ class ApiAuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = User::where('email', $request->input('email'))->first()->makeHidden(['profile_image'])->append('profile_url');
+        $user = User::where('email', $request->input('email'))->first();
+
 
         if (!$user) {
             return response()->json(['message' => 'Invalid credentials'], 401);
-        }
+        } // Ensure profile_url is included in the response
+
+        $user->append('profile_url')->makeHidden(['profile_image', 'created_at', 'updated_at']);
 
         $hashedPassword = $user ? $user->password : null;
 
