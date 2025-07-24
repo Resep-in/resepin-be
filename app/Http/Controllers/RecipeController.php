@@ -65,26 +65,45 @@ class RecipeController extends Controller
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        $response = Http::attach(
-            'image',
-            file_get_contents($request->file('image')->getRealPath()),
-            $request->file('image')->getClientOriginalName(),
-            [
-                'Content-Type' => $request->file('image')->getMimeType(),
-            ]
-        )
-            ->post(env("APP_MODEL_URL") . '/detect', [
-                'image' => $request->file('image')->getRealPath(),
-            ]);
+        try {
+            $response = Http::attach(
+                'image',
+                file_get_contents($request->file('image')->getRealPath()),
+                $request->file('image')->getClientOriginalName(),
+                [
+                    'Content-Type' => $request->file('image')->getMimeType(),
+                ]
+            )
+                ->post(env("APP_MODEL_URL") . '/detect', [
+                    'image' => $request->file('image')->getRealPath(),
+                ]);
+
+            if ($response->getStatusCode() !== 200) {
+                return response()->json(['message' => 'Error processing image'], $response->getStatusCode());
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error processing image'], 500);
+        }
+
+
         $label = [];
 
         foreach ($response->json()["detections"] as $key => $value) {
             $label[] = $value['label'];
         }
 
-        $response = Http::post(env("APP_MODEL_URL") . '/predict', [
-            'ingredients' => $label,
-        ]);
+        try {
+            $response = Http::post(env("APP_MODEL_URL") . '/predict', [
+                'ingredients' => $label,
+            ]);
+            if ($response->getStatusCode() !== 200) {
+                return response()->json(['message' => 'Error processing prediction'], $response->getStatusCode());
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error processing prediction'], 500);
+        }
+
+
 
         $recipesId = [];
 
