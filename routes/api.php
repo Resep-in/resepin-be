@@ -45,6 +45,7 @@ Route::group(['prefix' => '/', 'middleware' => ['auth:sanctum']], function () {
             Route::post('add', [RecipeBookmarkController::class, 'addBookmark']);
             Route::post('remove', [RecipeBookmarkController::class, 'removeBookmark']);
             Route::get('list', [RecipeBookmarkController::class, 'listBookmarks']);
+            Route::get('detail/{recipeId}', [RecipeBookmarkController::class, 'getRecipe']);
         });
     });
 

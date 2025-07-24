@@ -75,4 +75,19 @@ class RecipeBookmarkController extends Controller
 
         return response()->json($bookmarks);
     }
+
+    public function getRecipe($recipeId)
+    {
+
+        try {
+            $recipe = Recipe::where('id', $recipeId)->first();
+            if (!$recipe) {
+                return response()->json(['message' => 'Recipe not found'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error retrieving recipe'], 500);
+        }
+
+        return response()->json($recipe);
+    }
 }
